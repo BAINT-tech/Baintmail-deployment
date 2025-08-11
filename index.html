@@ -1,14 +1,412 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/x-icon" href="/Baintmail-deployment/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BaintMail - Secure Email Platform</title>
-    <script type="module" crossorigin src="/Baintmail-deployment/assets/index-DAOYgIH8.js"></script>
-    <link rel="stylesheet" crossorigin href="/Baintmail-deployment/assets/index-Ccd6kSF1.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #0d0d0d;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background-color: #1a1a1a;
+            border-bottom: 1px solid #333;
+            padding: 15px 0;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav a {
+            color: #b3b3b3;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav a:hover {
+            color: #ff6b00;
+        }
+
+        /* Main Content */
+        .main {
+            display: flex;
+            height: calc(100vh - 80px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: #1a1a1a;
+            border-right: 1px solid #333;
+            padding: 20px;
+        }
+
+        .compose-btn {
+            width: 100%;
+            background-color: #ff6b00;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .compose-btn:hover {
+            background-color: #e55a00;
+        }
+
+        .folders {
+            list-style: none;
+        }
+
+        .folders li {
+            margin-bottom: 8px;
+        }
+
+        .folders button {
+            width: 100%;
+            background: none;
+            border: none;
+            color: #b3b3b3;
+            padding: 10px 15px;
+            text-align: left;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .folders button:hover,
+        .folders button.active {
+            background-color: #333;
+            color: #ffffff;
+        }
+
+        .badge {
+            background-color: #ff6b00;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-left: 8px;
+        }
+
+        /* Email List */
+        .email-list {
+            width: 350px;
+            background-color: #0d0d0d;
+            border-right: 1px solid #333;
+            overflow-y: auto;
+        }
+
+        .list-header {
+            padding: 20px;
+            border-bottom: 1px solid #333;
+        }
+
+        .list-header h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .search-box {
+            width: 100%;
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .email-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #333;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .email-item:hover {
+            background-color: #1a1a1a;
+        }
+
+        .email-item.active {
+            background-color: #333;
+        }
+
+        .email-sender {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .email-subject {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .email-preview {
+            font-size: 12px;
+            color: #b3b3b3;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .email-time {
+            font-size: 12px;
+            color: #b3b3b3;
+            float: right;
+        }
+
+        /* Email Reader */
+        .email-reader {
+            flex: 1;
+            background-color: #0d0d0d;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .reader-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #333;
+        }
+
+        .reader-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            background-color: #1a1a1a;
+            color: white;
+            border: 1px solid #333;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #333;
+        }
+
+        .btn-primary {
+            background-color: #ff6b00;
+            border-color: #ff6b00;
+        }
+
+        .btn-primary:hover {
+            background-color: #e55a00;
+        }
+
+        .email-content {
+            line-height: 1.8;
+        }
+
+        .email-content h3 {
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+
+        /* Welcome Message */
+        .welcome {
+            text-align: center;
+            padding: 60px 20px;
+            color: #b3b3b3;
+        }
+
+        .welcome h2 {
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+            
+            .email-list {
+                width: 100%;
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iI0ZGNkIwMCIvPgo8cGF0aCBkPSJNMTIgMTJIMjhWMTZIMTJWMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMjBIMjhWMjRIMTJWMjBaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMjhIMjBWMzJIMTJWMjhaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K" alt="BaintMail">
+                    <h1>BaintMail</h1>
+                </div>
+                <nav class="nav">
+                    <a href="#features">Features</a>
+                    <a href="#about">About</a>
+                    <a href="#contact">Contact</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <aside class="sidebar">
+            <button class="compose-btn">+ Compose</button>
+            <ul class="folders">
+                <li><button class="active">Inbox <span class="badge">3</span></button></li>
+                <li><button>Sent</button></li>
+                <li><button>Drafts</button></li>
+                <li><button>Web3</button></li>
+                <li><button>Settings</button></li>
+            </ul>
+        </aside>
+
+        <section class="email-list">
+            <div class="list-header">
+                <h2>Inbox</h2>
+                <input type="text" class="search-box" placeholder="Search emails...">
+            </div>
+            
+            <div class="email-item active">
+                <div class="email-time">2:30 PM</div>
+                <div class="email-sender">Sarah Johnson</div>
+                <div class="email-subject">Welcome to BaintMail!</div>
+                <div class="email-preview">Thank you for joining BaintMail. Here's everything you need to know...</div>
+            </div>
+            
+            <div class="email-item">
+                <div class="email-time">1:15 PM</div>
+                <div class="email-sender">BaintMail Team</div>
+                <div class="email-subject">Your account is ready</div>
+                <div class="email-preview">Your BaintMail account has been successfully created and is ready to use...</div>
+            </div>
+            
+            <div class="email-item">
+                <div class="email-time">11:45 AM</div>
+                <div class="email-sender">Security Alert</div>
+                <div class="email-subject">New login detected</div>
+                <div class="email-preview">We detected a new login to your account from a new device...</div>
+            </div>
+        </section>
+
+        <section class="email-reader">
+            <div class="reader-header">
+                <div>
+                    <h3>Welcome to BaintMail!</h3>
+                    <p style="color: #b3b3b3; font-size: 14px;">From: Sarah Johnson &lt;sarah@baintmail.com&gt;</p>
+                </div>
+                <div class="reader-actions">
+                    <button class="btn">Reply</button>
+                    <button class="btn">Forward</button>
+                    <button class="btn">Delete</button>
+                </div>
+            </div>
+            
+            <div class="email-content">
+                <p>Hi there,</p>
+                <p>Welcome to BaintMail - the next-generation secure email platform! We're excited to have you on board.</p>
+                
+                <h3>🛡️ Your Privacy, Your Email</h3>
+                <p>BaintMail is built with privacy and security at its core. Every email is end-to-end encrypted, ensuring that only you and your intended recipients can read your messages.</p>
+                
+                <h3>✨ Key Features:</h3>
+                <ul style="margin-left: 20px; margin-bottom: 20px;">
+                    <li>End-to-end encryption</li>
+                    <li>AI-powered smart replies</li>
+                    <li>Dark mode interface</li>
+                    <li>Cross-platform sync</li>
+                    <li>Blockchain integration</li>
+                </ul>
+                
+                <p>If you have any questions or need help getting started, don't hesitate to reach out to our support team.</p>
+                
+                <p>Best regards,<br>
+                The BaintMail Team</p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Simple interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            const emailItems = document.querySelectorAll('.email-item');
+            const folderButtons = document.querySelectorAll('.folders button');
+            
+            emailItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    emailItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            folderButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    folderButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Compose button
+            document.querySelector('.compose-btn').addEventListener('click', function() {
+                alert('Compose functionality coming soon!');
+            });
+        });
+    </script>
+</body>
 </html>
+
